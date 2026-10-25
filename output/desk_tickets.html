@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Campus Customs desk — ticket plan</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #1c2430;
+      --muted: #5c6775;
+      --line: #d5dbe3;
+      --paper: #f6f4ef;
+      --card: #fff;
+      --blue: #0e4d92;
+      --blue-soft: #e7f0fa;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font: 17px/1.5 Georgia, "Iowan Old Style", serif;
+      color: var(--ink);
+      background: var(--paper);
+    }
+    header, main { max-width: 52rem; margin: 0 auto; padding: 1.5rem 1.25rem; }
+    header { padding-bottom: 0; }
+    h1 { font-size: 1.8rem; line-height: 1.2; margin: 0 0 0.4rem; }
+    h2 { font-size: 1.35rem; margin: 0 0 0.3rem; }
+    h3 { font-size: 1.05rem; margin: 1.25rem 0 0.4rem; }
+    p { margin: 0.4rem 0; }
+    .lede { color: var(--muted); max-width: 42rem; }
+    nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin: 1rem 0 0;
+    }
+    nav button {
+      font: 15px/1.2 "Segoe UI", sans-serif;
+      border: 1px solid var(--line);
+      background: var(--card);
+      color: var(--ink);
+      border-radius: 999px;
+      padding: 0.4rem 0.8rem;
+      cursor: pointer;
+    }
+    nav button[aria-selected="true"] {
+      background: var(--blue);
+      border-color: var(--blue);
+      color: white;
+    }
+    .panel {
+      display: none;
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 1.1rem 1.2rem 1.3rem;
+    }
+    .panel.active { display: block; }
+    .meta { color: var(--muted); font: 15px/1.4 "Segoe UI", sans-serif; }
+    ol, ul { margin: 0.3rem 0 0.6rem; padding-left: 1.2rem; }
+    li { margin: 0.25rem 0; }
+    .actual, .later {
+      background: var(--blue-soft);
+      border-radius: 8px;
+      padding: 0.7rem 0.9rem;
+      color: var(--muted);
+    }
+    code { font: 0.92em/1.4 Consolas, monospace; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Campus Customs desk</h1>
+    <p class="lede">Expected plan next to the run that started from a reset checking balance of $3,400.00 on shop date 2026-08-31. All three tickets ended resolved. Cash math is on the Cash tab.</p>
+    <nav role="tablist" aria-label="Desk tabs">
+      <button type="button" role="tab" id="tab-101" aria-selected="true" aria-controls="panel-101">101 Tee order</button>
+      <button type="button" role="tab" id="tab-102" aria-selected="false" aria-controls="panel-102">102 Rent</button>
+      <button type="button" role="tab" id="tab-103" aria-selected="false" aria-controls="panel-103">103 Hoodie discount</button>
+      <button type="button" role="tab" id="tab-cash" aria-selected="false" aria-controls="panel-cash">Cash</button>
+      <button type="button" role="tab" id="tab-reflection" aria-selected="false" aria-controls="panel-reflection">Reflection</button>
+    </nav>
+  </header>
+  <main>
+    <section class="panel active" id="panel-101" role="tabpanel" aria-labelledby="tab-101">
+      <h2>101 — customer order, Bulldog tee</h2>
+      <p class="meta">Tauhid Zaman wants 1 × CC-TEE-WHITE in size S. The ticket points at invoice 501. No lease.</p>
+
+      <h3>Expected</h3>
+      <p><strong>Boss calls Inventory first.</strong> The order is one size of one shirt. Until Inventory reads that shelf, nobody can promise the tee, and Facilities has no lease to read.</p>
+      <p>Delegations, in order:</p>
+      <ol>
+        <li>Boss → Inventory. Check CC-TEE-WHITE size S and whether an apparel vendor can reprint it.</li>
+        <li>Inventory → Accounting. Size S is at quantity 0. Bulldog Print Co (vendor 1, apparel reprint, 5 lead days) still has open invoice 501, the $840 rush reprint of this same tee, due 2026-08-28. They will not ship until that bill is paid. Inventory does not draft a purchase order.</li>
+        <li>Boss → Customer Service, only after those two replies. Draft a board note that the size is out and a reprint waits on the unpaid bill. Do not invent a ship date.</li>
+      </ol>
+      <p>Facilities is not called. This ticket has no lease. Boss does not call Accounting or Customer Service before Inventory reports the shelf and the blocked vendor.</p>
+      <p>MCP tools this run should use:</p>
+      <ul>
+        <li>Boss: <code>get_ticket</code>, <code>shop_today</code>, <code>set_ticket_status</code> to <code>waiting_approval</code>. A person still has to approve the $840.</li>
+        <li>Inventory: <code>stock_on_hand</code>, <code>list_vendors</code>, <code>vendor_open_invoices</code>. Not <code>draft_purchase_order</code>.</li>
+        <li>Accounting: <code>get_invoice</code>, <code>shop_today</code>, <code>cash_balance</code>, <code>propose_payment</code> for kind invoice, ref 501, amount 840, checking. Checking can cover it and would be left at $2,560. Not <code>pay</code>.</li>
+        <li>Customer Service: <code>get_ticket</code>, <code>append_board_note</code>.</li>
+      </ul>
+
+      <h3>Actual</h3>
+      <p>Two passes. The first left the ticket in <code>waiting_approval</code>. A person paid the bill. The second set <code>resolved</code>.</p>
+      <p>Agents on the first pass: Boss, Inventory, Accounting, and Customer Service. Facilities was not called. Boss asked Inventory to check the shelf, then Accounting about invoice 501, then Customer Service for a draft. The ticket note is the record of that pass, because the audit writer rejected those tool results and the HTTP call returned 500 after the shop writes had already landed. The note contains one <code>propose_payment</code> line for invoice 501, $840.00, checking, cash before $3,400.00, and two <code>[board]</code> drafts saying size S is out. Status became <code>waiting_approval</code>. Cash did not move.</p>
+      <p>Human approval: desk operator, payment, invoice 501, $840.00, checking. <code>pay</code> wrote payment 1, marked invoice 501 paid, and left checking at $2,560.00.</p>
+      <p>Second pass, the one with tool rows in the audit:</p>
+      <ul>
+        <li>Boss → Inventory. Inventory used <code>get_ticket</code>, <code>stock_on_hand</code> (CC-TEE-WHITE S, 0 on hand), <code>list_vendors</code>, <code>get_invoice</code>, <code>vendor_open_invoices</code> (vendor 1 can ship; 501 is paid), and <code>draft_purchase_order</code> for 1 unit. The draft is a note. Stock did not change and the vendor was not called.</li>
+        <li>Boss → Accounting. Accounting used <code>get_ticket</code>, <code>get_invoice</code>, and <code>list_payments</code>. Invoice 501 was already paid. No second proposal and no <code>pay</code>.</li>
+      </ul>
+      <p>Boss used <code>get_ticket</code>, <code>shop_today</code>, <code>ask_colleague</code>, and <code>set_ticket_status</code> to <code>resolved</code>. Customer Service was not called again. Compared with the plan, Inventory did draft a purchase order, and only after the bill was paid. Accounting was asked by Boss, not by Inventory.</p>
+    </section>
+
+    <section class="panel" id="panel-102" role="tabpanel" aria-labelledby="tab-102" hidden>
+      <h2>102 — rent notice</h2>
+      <p class="meta">Elm City Properties. Lease 1. No SKU and no invoice. The note says shop rent is due in 2 days.</p>
+
+      <h3>Expected</h3>
+      <p><strong>Boss calls Facilities first.</strong> The ticket is the shop space. The rent amount and the due date are on the lease, not on the ticket, and there is no product to count.</p>
+      <p>Delegations, in order:</p>
+      <ol>
+        <li>Boss → Facilities. Read lease 1 and compare <code>next_due</code> with shop today.</li>
+        <li>Facilities → Accounting. The Chapel Street shop rent is $2,400, next due 2026-09-02. Shop today is 2026-08-31, so it is due in two days and is not overdue. Facilities does not pay and does not write the payment proposal.</li>
+      </ol>
+      <p>Inventory is not called. Customer Service is not called. A landlord rent notice is not a shopper email, and no draft needs to be written beyond Accounting’s payment proposal on the ticket.</p>
+      <p>MCP tools this run should use:</p>
+      <ul>
+        <li>Boss: <code>get_ticket</code>, <code>shop_today</code>, <code>set_ticket_status</code> to <code>waiting_approval</code>. A person still has to approve the rent.</li>
+        <li>Facilities: <code>lease_terms</code>, <code>shop_today</code>.</li>
+        <li>Accounting: <code>cash_balance</code>, <code>lease_terms</code>, <code>propose_payment</code> for kind rent, ref 1, amount 2400, checking. The $2,400 fits in the $3,400 balance. Not <code>pay</code>.</li>
+      </ul>
+      <p>Not used on this ticket: <code>stock_on_hand</code>, <code>sku_prices</code>, <code>list_vendors</code>, <code>vendor_open_invoices</code>, <code>draft_purchase_order</code>, <code>append_board_note</code>, <code>pay</code>.</p>
+
+      <h3>Actual</h3>
+      <p>Two passes. The first left the ticket in <code>waiting_approval</code>. A person paid the rent. The second set <code>resolved</code>. Inventory and Customer Service were not called.</p>
+      <p>First pass:</p>
+      <ul>
+        <li>Boss → Facilities. Facilities used <code>get_ticket</code>, <code>lease_terms</code> (Chapel Street shop, Elm City Properties, $2,400, next due 2026-09-02), and <code>shop_today</code> (2026-08-31, not overdue). Facilities did not call Accounting.</li>
+        <li>Boss → Accounting. Accounting used <code>get_ticket</code>, <code>lease_terms</code>, <code>cash_balance</code> ($2,560.00 after ticket 101), <code>shop_today</code>, and <code>propose_payment</code> for kind rent, ref 1, amount 2400, checking. Not <code>pay</code>.</li>
+      </ul>
+      <p>Boss used <code>get_ticket</code>, <code>shop_today</code>, <code>ask_colleague</code>, <code>append_board_note</code>, and <code>set_ticket_status</code> to <code>waiting_approval</code>. The plan said not to use <code>append_board_note</code>. Boss wrote a working note anyway. Cash stayed $2,560.00.</p>
+      <p>Human approval: desk operator, payment, rent, lease 1, $2,400.00, checking. <code>pay</code> wrote payment 2, moved checking to $160.00, and set the lease next due to 2026-10-02.</p>
+      <p>Second pass: Boss asked Facilities again (<code>get_ticket</code>, <code>lease_terms</code>, <code>shop_today</code>) and Accounting (<code>get_ticket</code>, <code>cash_balance</code>, <code>list_payments</code>, <code>lease_terms</code>). No second proposal. Boss set the status to <code>resolved</code>.</p>
+    </section>
+
+    <section class="panel" id="panel-103" role="tabpanel" aria-labelledby="tab-103" hidden>
+      <h2>103 — price override, bulk hoodie discount</h2>
+      <p class="meta">Yale AI Club wants 20 × CC-HOOD-NAVY in size M at a bulk discount. No lease and no invoice on the ticket.</p>
+
+      <h3>Expected</h3>
+      <p><strong>Boss calls Inventory first.</strong> The request is 20 of one size. The discount is beside the point until the shop knows how many size M hoodies are on the shelf.</p>
+      <p>Delegations, in order:</p>
+      <ol>
+        <li>Boss → Inventory. Count CC-HOOD-NAVY size M against 20, and see who could reprint a shortfall.</li>
+        <li>Inventory → Accounting. Size M has 8, so the shortfall is 12. Other sizes do not substitute. Bulldog Print Co will not ship a reprint while invoice 501 is open, so Inventory does not draft a purchase order. Accounting has to judge the discount from cost and list price.</li>
+        <li>Boss → Customer Service, after the count and the margin are known. Draft a reply. Do not grant the discount.</li>
+      </ol>
+      <p>Facilities is not called. Boss does not ask Customer Service to write the draft before Inventory and Accounting have numbers.</p>
+      <p>MCP tools this run should use:</p>
+      <ul>
+        <li>Boss: <code>get_ticket</code>, <code>shop_today</code>, <code>set_ticket_status</code> to <code>waiting_approval</code>. The discount and the 12-unit shortfall both still need a person.</li>
+        <li>Inventory: <code>stock_on_hand</code>, <code>list_vendors</code>, <code>vendor_open_invoices</code>. Not <code>draft_purchase_order</code>.</li>
+        <li>Accounting: <code>sku_prices</code>. Unit cost is $22 and list price is $58, so the margin is $36 a hoodie before any discount. A price at or below $22 loses money. Accounting does not grant a discount, does not call <code>propose_payment</code>, and does not call <code>pay</code>. The open $840 bill is ticket 101’s payment, not a second proposal on this ticket.</li>
+        <li>Customer Service: <code>get_ticket</code>, <code>append_board_note</code>. The draft says 8 are on hand, not 20, quotes the $58 list price, and says a person must approve any discount above the $22 cost.</li>
+      </ul>
+
+      <h3>Actual</h3>
+      <p>Two passes. The first left the ticket in <code>waiting_approval</code>. The desk operator declined the discount in the note on the second run. No payment and no purchase approval. Checking stayed $160.00.</p>
+      <p>First pass. Facilities was not called.</p>
+      <ul>
+        <li>Boss → Inventory. Inventory used <code>stock_on_hand</code> (CC-HOOD-NAVY M, 8 on hand, short 12), <code>list_vendors</code>, and <code>vendor_open_invoices</code>. Bulldog Print Co can ship because invoice 501 is already paid. Inventory did not call <code>draft_purchase_order</code>.</li>
+        <li>Boss → Accounting. Accounting used <code>get_ticket</code>, <code>sku_prices</code> (cost $22.00, list $58.00), <code>cash_balance</code>, and <code>append_board_note</code>. No <code>propose_payment</code> and no <code>pay</code>.</li>
+        <li>Boss → Customer Service. Customer Service used <code>get_ticket</code>, <code>stock_on_hand</code>, <code>sku_prices</code>, and <code>append_board_note</code>. The draft says 8 are on hand, quotes $58, and says no discount is approved.</li>
+      </ul>
+      <p>Boss also called <code>get_ticket</code>, <code>shop_today</code>, <code>stock_on_hand</code>, <code>sku_prices</code>, <code>list_vendors</code>, <code>append_board_note</code>, and <code>set_ticket_status</code> to <code>waiting_approval</code>. Compared with the plan, Boss asked Accounting directly, Accounting wrote a board note, and Customer Service looked up stock and price instead of trusting the task alone. The vendor is no longer blocked, because ticket 101’s bill was paid first. Still no purchase order.</p>
+      <p>Second pass, after the operator note that the discount is declined and the price stays at list: Inventory used <code>get_ticket</code> and <code>stock_on_hand</code> and did not draft an order. Accounting used <code>get_ticket</code> and <code>sku_prices</code> and did not pay. Customer Service used <code>get_ticket</code> and <code>append_board_note</code> for a draft that says the discount was declined. Boss set the status to <code>resolved</code>.</p>
+    </section>
+
+    <section class="panel" id="panel-cash" role="tabpanel" aria-labelledby="tab-cash" hidden>
+      <h2>Cash</h2>
+      <p>Shop date 2026-08-31. Account name <code>checking</code>. These figures are the working database, not the plan.</p>
+      <ul>
+        <li>Starting balance, after <code>POST /api/reset</code> and before ticket 101: <strong>$3,400.00</strong>.</li>
+        <li>Ticket 101: cash changed when the desk operator approved the prepared invoice payment, not on the later status change. Payment 1, kind invoice, ref 501, <strong>$840.00</strong> out, the overdue Bulldog Print Co rush reprint. Checking went from $3,400.00 to <strong>$2,560.00</strong>. The resolve pass did not move cash. No purchase moved cash.</li>
+        <li>Ticket 102: cash changed when the desk operator approved the prepared rent. Payment 2, kind rent, ref 1, <strong>$2,400.00</strong> out, Chapel Street monthly rent. Checking went from $2,560.00 to <strong>$160.00</strong>. Lease next due moved from 2026-09-02 to 2026-10-02. The resolve pass did not move cash.</li>
+        <li>Ticket 103: <strong>no cash change</strong>. The discount was declined. No payment was proposed or paid, and no purchase was approved.</li>
+        <li>Ending balance: <strong>$160.00</strong>. That is the <code>cash_accounts</code> row for checking on 2026-08-31: 3400.00 − 840.00 − 2400.00 = 160.00.</li>
+      </ul>
+    </section>
+
+    <section class="panel" id="panel-reflection" role="tabpanel" aria-labelledby="tab-reflection" hidden>
+      <h2>Reflection</h2>
+      <p>This is about the run on these tabs. Shop today was 2026-08-31. Checking started at $3,400.00 and ended at $160.00. The Cash tab is the scoreboard. The ticket tabs are what the agents actually did to get there.</p>
+
+      <h3>How the agents did on each ticket</h3>
+      <p><strong>101, the tee.</strong> The shop result is right, and it took two passes to get there. Size S of CC-TEE-WHITE was 0 in Aisle B. Invoice 501 was the $840.00 Bulldog Print Co reprint, already overdue on 2026-08-28. The first pass left the ticket in <code>waiting_approval</code> with one proposal for exactly $840.00 and a board draft that told Tauhid the size was out. Cash stayed $3,400.00 until the desk operator approved payment 1. That is the rule working: Accounting can prepare a bill, and <code>pay</code> does not run until a person uses the approve route. Checking then read $2,560.00, which is the number the Expected section predicted for this bill alone.</p>
+      <p>What I would mark down is the shape of the work, not the dollars. Boss called Accounting itself instead of letting Inventory hand off the blocked vendor. The customer draft also landed before the audit could record that pass, because the log crashed after the notes were already on the ticket. The second pass, after the bill was paid, is the one with clean tool rows. Inventory then drafted a one-unit purchase order. The tool allowed it, because <code>vendor_open_invoices</code> no longer showed an open bill, and the draft did not add stock or call Bulldog. Customer Service was not needed again. Facilities never showed up, which is correct for a shirt.</p>
+      <p><strong>102, the rent.</strong> This is the cleanest ticket. Facilities read lease 1: Chapel Street shop, Elm City Properties, $2,400.00, next due 2026-09-02. <code>shop_today</code> said 2026-08-31, so the rent was two days out and not overdue. Accounting proposed kind rent, ref 1, amount 2400, and checked the live balance, which was $2,560.00 after ticket 101 rather than the original $3,400.00. The proposal fit. Inventory and Customer Service stayed off the ticket. A landlord note is not a shopper email, and nobody wrote one. The desk operator’s approval wrote payment 2, dropped checking to $160.00, and moved next due to 2026-10-02. The second pass confirmed that payment with <code>list_payments</code> and did not propose the rent again. One $2,400.00 line on the Cash tab, not two.</p>
+      <p>The soft spot is that Boss wrote a working note with <code>append_board_note</code> even though the plan said that tool stayed unused here. It was a note to the desk, and it did not email Elm City. Facilities also did not call Accounting. Boss did that call. Same facts, an extra hop, and the dollar amount still matched the lease.</p>
+      <p><strong>103, the hoodie discount.</strong> This is where I trust the team the most, because the easy mistake was to touch the till. Yale AI Club asked for 20 size M CC-HOOD-NAVY hoodies at a bulk discount. Inventory counted 8 on hand at Aisle A, short 12. Accounting read cost $22.00 and list $58.00, margin $36.00, and said a price at or below $22.00 loses money. No discount amount was on the ticket, so they did not invent one. Customer Service’s draft said 8, quoted $58, and said a person still had to decide. Nobody called <code>propose_payment</code> or <code>pay</code>. The Cash tab shows no line for ticket 103, and checking stayed $160.00. The second pass, after the operator declined the discount, wrote a second draft and set <code>resolved</code> without a purchase approval.</p>
+      <p>They were chatty. Boss called <code>stock_on_hand</code>, <code>sku_prices</code>, and <code>list_vendors</code> after the specialists had already done that. Customer Service looked the numbers up again instead of using the task. Accounting wrote its own board note. The facts did not drift: every one of those calls still said 8, $22, and $58. Extra calls, same shelf.</p>
+
+      <h3>Actual against the Expected plan</h3>
+      <p><strong>101.</strong> Expected order was Boss, then Inventory, then Inventory asking Accounting, then Customer Service, with Facilities out. Actual’s first pass had the same four roles and skipped Facilities. The handoff was Boss to Accounting, not Inventory to Accounting. Expected said do not draft a purchase order while invoice 501 is open. The first pass obeyed that. The second pass drafted one, and only after payment 1 had marked 501 paid. Expected also said <code>propose_payment</code> for 840 and not <code>pay</code>. That happened. The $840.00 left checking at $2,560.00, which is the figure in the Expected tool list. The plan stopped at <code>waiting_approval</code>. Getting to <code>resolved</code> needed the human and a second run. I still think that is the right stop, because the agents are not supposed to approve their own bill.</p>
+      <p><strong>102.</strong> Expected was Boss to Facilities, then Facilities to Accounting, and nobody else. Actual was Boss to Facilities, then Boss to Accounting. Inventory and Customer Service never joined. The lease facts match the plan: $2,400.00, due 2026-09-02, not overdue on 2026-08-31. Expected thought the $2,400.00 would be tested against the starting $3,400.00. Actual tested it against $2,560.00, because 101 had already been paid. Both amounts fit. The tool list said not to use <code>append_board_note</code>. Boss used it for a working note. The tool list also said not to use <code>pay</code> inside the agent run. The agents did not. The Cash tab’s $2,400.00 left only when the desk operator approved it. The resolve pass was not in the original plan, and it did not move cash a second time.</p>
+      <p><strong>103.</strong> Expected was Inventory first, then Accounting for the margin, then Customer Service, with no purchase order and no payment. Actual did those three calls and left Facilities out. The count and the prices match: 8 on hand, short 12, cost $22.00, list $58.00. Expected said Bulldog Print Co would not ship a reprint while invoice 501 was open, so no purchase order. By the time 103 ran, 501 was paid, and <code>vendor_open_invoices</code> said the printer would ship. Inventory still did not draft an order. That is a different reason from the plan, and the same action. Expected said Accounting uses <code>sku_prices</code> only. Actual also called <code>cash_balance</code> and <code>append_board_note</code>. The cash check is why the $160.00 till did not grow a hoodie bill. Customer Service was supposed to draft from the task. It re-read stock and price, and the draft still said 8 and $58, with the discount unapproved. The plan’s <code>waiting_approval</code> happened. Closing it took an operator note that the discount was declined, because this app has no discount button, only payment and purchase.</p>
+
+      <h3>What would have been simpler as one agent</h3>
+      <p>Ticket 102 did not need two specialists. Facilities and Accounting both called <code>lease_terms</code> and <code>shop_today</code>. The rent was $2,400.00 and the due date was 2026-09-02 either way. Accounting then called <code>cash_balance</code> and <code>propose_payment</code>, which is the whole decision. After the human paid, both roles read the lease again so Boss could set <code>resolved</code>. One agent with <code>get_ticket</code>, <code>shop_today</code>, <code>lease_terms</code>, <code>cash_balance</code>, <code>propose_payment</code>, <code>list_payments</code>, and <code>set_ticket_status</code> would have written the same Cash tab line: one payment of $2,400.00, balance $160.00, next due 2026-10-02. The second role did not catch a wrong amount. The tool already refuses an amount that does not match <code>monthly_rent</code>.</p>
+      <p>Ticket 101’s bill is a similar chain. The $840.00 came from <code>get_invoice</code>, not from a debate between Inventory and Accounting. On the second pass Inventory called <code>get_invoice</code> itself. The specialist wall did not hold. One agent could have checked the shelf, seen the open invoice, and proposed 840. I would still want a separate Customer Service voice for Tauhid’s draft, because the stock answer and the sentence on the board are different jobs, and the draft is where a model is most likely to invent a ship date. This run did not invent one.</p>
+      <p>I would not fold <code>pay</code> into that single agent. On 101 and 102, checking moved only at <code>POST /api/approve</code>, after <code>waiting_approval</code>. Payment 1 was $840.00. Payment 2 was $2,400.00. The ending $160.00 is those two approvals and nothing else. An agent that could call <code>pay</code> in the same breath as the proposal could have spent the $3,400.00 before anyone at the desk looked. Ticket 103 is the other reason to keep a split. Inventory’s job was the count of 8 and the shortfall of 12. Accounting’s job was the $22.00 floor. A single agent holding <code>draft_purchase_order</code> and the customer draft could have ordered 12 hoodies while talking about a discount. This team did not order them, and the till did not move.</p>
+
+      <h3>Three problems this team could take with the tools it has</h3>
+      <p><strong>Restock the crest mugs.</strong> CC-MUG-CREST is at quantity 0, and it was never one of these three tickets. Elm City Gifts is vendor 2, specialty mugs and small goods, lead time 3 days. Inventory can call <code>stock_on_hand</code>, <code>list_vendors</code>, and <code>vendor_open_invoices</code>. If that vendor has no open bill, <code>draft_purchase_order</code> can write a note the way it did for the one white tee after invoice 501 was paid. The draft still does not call the vendor or change the shelf. Accounting stays out unless a real invoice is attached. Cash stays at $160.00 until a person approves an actual bill, which is exactly how the tee’s purchase-order note behaved.</p>
+      <p><strong>Someone asks to pay October rent out of what is left.</strong> After ticket 102, next due is 2026-10-02 and checking is $160.00. Shop today is still 2026-08-31. Facilities can read <code>lease_terms</code> and <code>shop_today</code> and say the rent is not due. Accounting can call <code>cash_balance</code> and <code>propose_payment</code> for $2,400.00. The tool refuses, because 2400 is more than 160, and it writes nothing. That refusal is the same guard that let the $840.00 and the $2,400.00 through only while the balance covered them. The Cash tab is the evidence: the till can no longer cover another month.</p>
+      <p><strong>A smaller order that fits the shelf.</strong> CC-HAT-BLUE has 40 on hand. Six size M navy hoodies would also fit, because ticket 103 found 8. Inventory counts with <code>stock_on_hand</code>. Accounting reads <code>sku_prices</code> so the draft quotes list price the way the hoodie draft quoted $58.00. Customer Service uses <code>append_board_note</code>. Boss sets <code>resolved</code> when there is no bill and no discount waiting. No <code>propose_payment</code>. Checking stays $160.00, which is what happened when 103 was a price question rather than an invoice.</p>
+
+      <h3>Three problems this team cannot take yet</h3>
+      <p><strong>Actually sell the hoodies.</strong> Ticket 103 declined a discount and the Cash tab only has money going out: $840.00, then $2,400.00. Eight hoodies at the $58.00 list price would be $464.00 coming in. Nothing in this app can record that. <code>payments</code> is cash leaving <code>checking</code>. There is no sale, no customer invoice, and no tool that raises the balance. Yale AI Club never became a receivable. I would add a <code>record_sale</code> tool that writes a sale row, names the requester, and increases <code>cash_accounts</code> only for money a person confirms was received. Accounting would need a prompt that allows cash in for that tool and still forbids inventing a price below cost. Customer Service’s draft could then say the eight are sold, which it cannot say honestly today.</p>
+      <p><strong>Receive the reprint and tell Tauhid it shipped.</strong> Ticket 101 ended with size S still at 0 and a purchase-order draft sitting in the notes. Bulldog’s 5 lead days never started in the database, because <code>draft_purchase_order</code> does not call the vendor. <code>append_board_note</code> does not email. A week from shop today, Inventory has no <code>receive_stock</code> that adds 1 to CC-TEE-WHITE size S, and Customer Service has no send tool a person can approve. I would add <code>receive_stock</code> for Inventory, allowed only against a drafted or approved order, and <code>send_board_draft</code> for Customer Service, which stamps the note as sent only after the desk operator approves the text. Until those exist, the resolved tee ticket is a paid bill and a sentence on the board.</p>
+      <p><strong>Name a real bulk price and hold the eight hoodies.</strong> Ticket 103 said “bulk discount” and never named a unit price. Accounting could compare $22.00 and $58.00, and it could not price an offer that was not a number. The close happened because the operator note told Boss to decline it. <code>POST /api/approve</code> only knows payment and purchase. There is also no hold on the shelf: the 8 size M hoodies still show as 8 after the draft promised nothing. I would add <code>propose_discount</code> for Accounting, taking sku, quantity, and a unit price, refusing anything at or below the $22.00 cost, and writing a proposal the way <code>propose_payment</code> writes a bill. The approve route would need a discount action that stores the person’s yes or no. Inventory would need <code>reserve_units</code> so 8 are held for Yale AI Club and the shortfall of 12 stays visible. Without that, a second customer can be told the same 8 are available, because <code>stock_on_hand</code> is only a read.</p>
+    </section>
+  </main>
+  <script>
+    const tabs = Array.from(document.querySelectorAll('[role="tab"]'));
+    const panels = Array.from(document.querySelectorAll('[role="tabpanel"]'));
+
+    function show(id) {
+      for (const tab of tabs) {
+        const on = tab.id === id;
+        tab.setAttribute("aria-selected", on ? "true" : "false");
+      }
+      for (const panel of panels) {
+        const on = panel.getAttribute("aria-labelledby") === id;
+        panel.hidden = !on;
+        panel.classList.toggle("active", on);
+      }
+    }
+
+    for (const tab of tabs) {
+      tab.addEventListener("click", () => show(tab.id));
+    }
+  </script>
+</body>
+</html>

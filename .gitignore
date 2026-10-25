@@ -1,0 +1,10 @@
+.env
+.venv/
+**/__pycache__/
+*.pyc
+node_modules/
+.cursor/
+output/payment_approvals.json
+output/*.json.tmp
+data.zip
+Expected layout.jpg

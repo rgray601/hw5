@@ -1,0 +1,42 @@
+{
+  "server": "campus-customs",
+  "connection": ".mcp.json",
+  "database": "data/campus_customs_new.db",
+  "tools": [
+    {
+      "prompt": "Use the campus-customs MCP server. Call stock_on_hand for SKU CC-TEE-WHITE, size S, and return only the tool output.",
+      "tool": "stock_on_hand",
+      "output": {
+        "found": true,
+        "sku": "CC-TEE-WHITE",
+        "name": "Classic Bulldog Tee",
+        "size": "S",
+        "qty": 0,
+        "location": "Aisle B"
+      }
+    },
+    {
+      "prompt": "Use the campus-customs MCP server. Call lease_terms for lease id 1 and return only the tool output.",
+      "tool": "lease_terms",
+      "output": {
+        "found": true,
+        "id": 1,
+        "space_name": "Chapel Street shop",
+        "landlord": "Elm City Properties",
+        "monthly_rent": 2400.0,
+        "next_due": "2026-09-02",
+        "notes": null
+      }
+    },
+    {
+      "prompt": "Use the campus-customs MCP server. Call sku_prices for SKU CC-HOOD-NAVY and return only the tool output.",
+      "tool": "sku_prices",
+      "output": {
+        "found": true,
+        "sku": "CC-HOOD-NAVY",
+        "unit_cost": 22.0,
+        "list_price": 58.0
+      }
+    }
+  ]
+}

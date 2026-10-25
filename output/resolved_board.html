@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Campus Customs — resolved board</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      color-scheme: dark;
+      --night: #1a1030;
+      --blue: #00356b;
+      --gold: #e2b657;
+      --cream: #f6efe2;
+      --pink: #e85a8a;
+    }
+    body {
+      margin: 0;
+      background: var(--night);
+      color: var(--cream);
+      font-family: "Source Sans 3", sans-serif;
+    }
+    header, main { max-width: 1100px; margin: 0 auto; padding: 28px 20px; }
+    h1, h2 { font-family: "Abril Fatface", serif; font-weight: 400; }
+    h1 { color: var(--gold); margin-bottom: 0; }
+    .lede { color: #d9cbb6; }
+    figure {
+      margin: 28px 0 40px;
+      background: #140c24;
+      border: 1px solid var(--blue);
+      border-radius: 16px;
+      overflow: hidden;
+    }
+    figcaption { padding: 14px 16px 4px; color: var(--gold); }
+    img { display: block; width: 100%; height: auto; background: #0e0818; }
+    p { padding: 0 16px 16px; margin: 8px 0 0; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Resolved board</h1>
+    <p class="lede">The React desk after tickets 101, 102, and 103 were resolved. Checking is $160.00. Each shot is that ticket open on the floor.</p>
+  </header>
+  <main>
+    <figure>
+      <figcaption>Ticket 101 — Bulldog tee, resolved</figcaption>
+      <img src="board_101.png" alt="React desk with ticket 101 resolved and checking at 160 dollars" />
+      <p>Invoice 501 is paid. The board note includes the $840.00 proposal, the customer draft, and the purchase-order draft written after the vendor could ship.</p>
+    </figure>
+    <figure>
+      <figcaption>Ticket 102 — Rent due, resolved</figcaption>
+      <img src="board_102.png" alt="React desk with ticket 102 resolved and checking at 160 dollars" />
+      <p>Lease 1 rent of $2,400.00 is paid. Next due is 2026-10-02.</p>
+    </figure>
+    <figure>
+      <figcaption>Ticket 103 — Bulk hoodie discount, resolved</figcaption>
+      <img src="board_103.png" alt="React desk with ticket 103 resolved and checking at 160 dollars" />
+      <p>The discount was declined. Eight size M hoodies are on hand. Checking did not change on this ticket.</p>
+    </figure>
+  </main>
+</body>
+</html>

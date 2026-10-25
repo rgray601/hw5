@@ -1,0 +1,69 @@
+[
+  {
+    "id": 101,
+    "final_status": "resolved",
+    "outcome": "Size S of CC-TEE-WHITE was out of stock. Invoice 501 for $840.00 was proposed, then paid by the desk operator, and the ticket was closed. Inventory drafted a one-unit reprint only after that bill was paid. The draft was not sent.",
+    "agents": {
+      "boss": "Called Inventory, then Accounting, then Customer Service on the first pass and set waiting_approval. On the second pass called Inventory and Accounting and set resolved.",
+      "inventory": "Reported 0 on hand for CC-TEE-WHITE size S in Aisle B. After invoice 501 was paid, confirmed Bulldog Print Co will ship and drafted a purchase order for 1. Stock did not change.",
+      "accounting": "Prepared the $840.00 invoice proposal on the first pass. On the second pass confirmed payment 1 and did not propose again.",
+      "facilities": "Not called.",
+      "customer_service": "Drafted a board note that size S is out. Did not email the customer."
+    },
+    "human_approvals": [
+      {
+        "approved_by": "desk operator",
+        "action": "payment",
+        "kind": "invoice",
+        "ref_id": 501,
+        "amount": 840.0,
+        "account": "checking",
+        "payment_id": 1,
+        "balance_after": 2560.0
+      }
+    ]
+  },
+  {
+    "id": 102,
+    "final_status": "resolved",
+    "outcome": "Chapel Street rent of $2,400.00, due 2026-09-02, was proposed while checking had $2,560.00. The desk operator paid it. Next due moved to 2026-10-02 and the ticket was closed.",
+    "agents": {
+      "boss": "Called Facilities, then Accounting. Wrote a working note and set waiting_approval. After the payment, called both again and set resolved.",
+      "inventory": "Not called.",
+      "accounting": "Proposed rent for lease 1 at $2,400.00. After approval, confirmed payment 2 and the $160.00 balance. Did not propose a second payment.",
+      "facilities": "Read lease 1: Chapel Street shop, Elm City Properties, $2,400, next due 2026-09-02, not overdue on 2026-08-31. After payment, confirmed the new next due of 2026-10-02.",
+      "customer_service": "Not called."
+    },
+    "human_approvals": [
+      {
+        "approved_by": "desk operator",
+        "action": "payment",
+        "kind": "rent",
+        "ref_id": 1,
+        "amount": 2400.0,
+        "account": "checking",
+        "payment_id": 2,
+        "balance_after": 160.0
+      }
+    ]
+  },
+  {
+    "id": 103,
+    "final_status": "resolved",
+    "outcome": "Eight size M CC-HOOD-NAVY hoodies are on hand against a request for 20. Cost is $22.00 and list is $58.00. The desk operator declined the bulk discount. No money moved.",
+    "agents": {
+      "boss": "Called Inventory, Accounting, and Customer Service, then set waiting_approval. After the decline, called the same three and set resolved.",
+      "inventory": "Counted 8 on hand at Aisle A, shortfall 12. Bulldog Print Co can ship because invoice 501 is paid. Did not draft a purchase order.",
+      "accounting": "Reported unit cost $22.00 and list $58.00. Wrote the pricing note. Did not propose or make a payment.",
+      "facilities": "Not called.",
+      "customer_service": "Drafted a board reply that 8 are on hand at the $58 list price, then a second draft that the discount was declined. Nothing was emailed."
+    },
+    "human_approvals": [
+      {
+        "approved_by": "desk operator",
+        "action": "decline_discount",
+        "note": "Bulk discount declined. Price stays at the $58.00 list price. No payment and no purchase."
+      }
+    ]
+  }
+]
